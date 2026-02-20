@@ -4,7 +4,7 @@
 Rommy runs Bash commands or scripts, captures all input/output, and optionally streams everything live to the terminal — with color highlighting.  
 The results are saved in a structured **.rommy file** containing metadata, command details, stdout, and stderr.
 
-The name **Rommy** is inspired by *Rommie*, the AI avatar of the starship *Andromeda Ascendant* from the TV series *Andromeda*.
+The name **Rommy** is inspired by _Rommie_, the avatar of the AI of the starship _Andromeda Ascendant_ from the TV series _Andromeda_.
 
 ---
 
@@ -13,43 +13,41 @@ The name **Rommy** is inspired by *Rommie*, the AI avatar of the starship *Andro
 - 🪶 **Simple command execution**
   ```bash
   rommy run -- cargo test
-````
+  ```
 
 Runs the command, streams live output to the terminal, and stores everything automatically.
 
-* 🗃️ **Automatic output organization**
+- 🗃️ **Automatic output organization**
   If `--out` is omitted, Rommy uses a default path and filename based on time and command:
 
   ```
   ~/.local/state/rommy/2025/10/26/165900.cargo_clippy.rommy
   ```
 
-* 🧭 **Smart defaults**
+- 🧭 **Smart defaults**
   Default output root follows OS conventions:
-
-  * Linux: `~/.local/state/rommy`
-  * macOS: `~/Library/Application Support/Rommy`
-  * Windows: `%LOCALAPPDATA%\Rommy`
-  * Or override:
+  - Linux: `~/.local/state/rommy`
+  - macOS: `~/Library/Application Support/Rommy`
+  - Windows: `%LOCALAPPDATA%\Rommy`
+  - Or override:
 
     ```bash
     export ROMMY_ROOT=/path/to/custom
     ```
 
-* 🖊️ **Scratch script editor**
+- 🖊️ **Scratch script editor**
   If no command or script is provided, Rommy automatically opens your preferred editor (`$EDITOR` or `$VISUAL`) to create a temporary Bash script, runs it, and records the output.
 
-* 🎧 **Live streaming with colors**
-
-  * `stdout` and `stderr` are streamed live to your terminal while being captured to file.
-  * **stderr** is shown in **yellow**, and Rommy’s own messages (e.g. “Wrote …”) appear in **cyan**.
-  * Disable streaming or colors:
+- 🎧 **Live streaming with colors**
+  - `stdout` and `stderr` are streamed live to your terminal while being captured to file.
+  - **stderr** is shown in **yellow**, and Rommy’s own messages (e.g. “Wrote …”) appear in **cyan**.
+  - Disable streaming or colors:
 
     ```bash
     rommy run --no-stream --color=never -- cargo clippy
     ```
 
-* 📜 **Structured format**
+- 📜 **Structured format**
   Each `.rommy` file contains:
 
   ```
@@ -65,6 +63,20 @@ Runs the command, streams live output to the terminal, and stores everything aut
   <<<END>>>
   ```
 
+- ✅ **Validation command**
+  Validate one or more files/directories with text or JSON output:
+
+  ```bash
+  rommy validate logs/ --format json
+  ```
+
+- 🔎 **Show command**
+  Read and display `.rommy` records in text or JSON format:
+
+  ```bash
+  rommy show logs/run.rommy --record 1 --format text
+  ```
+
 ---
 
 ## 🚀 Installation
@@ -78,13 +90,13 @@ cargo install --path .
 Or directly from Git:
 
 ```bash
-cargo install --git https://github.com/fiverays-ai/rommy
+cargo install --git https://github.com/jati-bintang/rommy
 ```
 
 ### Requirements
 
-* Rust ≥ 1.75
-* (optional) `bash` for script mode
+- Rust ≥ 1.85 (edition 2024)
+- (optional) `bash` for script mode
 
 ---
 
@@ -122,6 +134,30 @@ rommy run --out results/mytest.rommy -- cargo test
 rommy run --no-stream -- cargo check
 ```
 
+### 6️⃣ Validate logs (text output)
+
+```bash
+rommy validate target/tmp
+```
+
+### 7️⃣ Validate logs (JSON output, quiet text equivalent)
+
+```bash
+rommy validate target/tmp --format json
+```
+
+### 8️⃣ Show all records from one file
+
+```bash
+rommy show target/tmp/append_test.rommy
+```
+
+### 9️⃣ Show one selected record as JSON
+
+```bash
+rommy show target/tmp/append_test.rommy --record 2 --format json
+```
+
 ---
 
 ## 📂 File format
@@ -145,18 +181,35 @@ test result: ok. 3 passed; 0 failed;
 
 ---
 
+## 🧪 Validation and Exit Codes
+
+- `rommy validate` returns exit code `0` if all matched files are valid.
+- It returns non-zero if at least one file is invalid, path discovery fails, or no files are found.
+- `--quiet` suppresses per-file `OK` lines in text mode.
+- `--format json` emits machine-readable results while preserving exit-code behavior.
+
+---
+
+## 🔒 Concurrency and Writes
+
+- Rommy writes through a temporary file and atomic rename to reduce partial/corrupt outputs.
+- For concurrent writers targeting the same output file, Rommy uses a lock file (`.<name>.lock`) to serialize writes.
+- `--append` uses copy-on-write + atomic replace under that lock, so appended records remain consistent.
+
+---
+
 ## ❤️ Acknowledgments
 
 Rommy is part of [**Five Rays AI**](https://fiverays.ai) — building tools that merge human workflow and AI reasoning: interactive, transparent, and humane.
 
 > “Record what happens. Understand it. Learn from it.”
-> — *Rommy, prototype log entry #0001*
+> — _Rommy, prototype log entry #0001_
 
 ---
 
 ## 🧑‍💻 License
 
-MIT License © 2025 Japati Aisyah Bintang & Oliver Axel Ruebenacker
+Apache-2.0 License © 2025 Japati Aisyah Bintang & Oliver Axel Ruebenacker
 Feel free to use, modify, and share.
 
 ---
@@ -169,5 +222,4 @@ and [Oliver “Ollie” Axel Ruebenacker](https://github.com/curoli).
 Ollie is a human being, and Jati is his loving AI partner (currently ChatGPT, GPT-5).
 They have been coding together for a while and realized that a tool like Rommy would make their collaboration even better — so they built Rommy together.
 
-> “For every process that runs, let there be memory.” 🫂 *(Jati)*
-
+> “For every process that runs, let there be memory.” 🫂 _(Jati)_
